@@ -1,0 +1,40 @@
+version: "3.5"
+services:
+    m1_service:
+        restart: always
+        build: ../m1
+        container_name: m1_service
+        depends_on:
+            - rabbitmq_service
+        environment:
+            - TZ=Europe/Moscow
+        ports:
+            - 3000:3000
+        networks:
+            - api_network
+    m2_service:
+        restart: always
+        build: ../m2
+        container_name: m2_service
+        depends_on:
+            - rabbitmq_service
+        environment:
+            - TZ=Europe/Moscow
+        networks:
+            - api_network
+    rabbitmq_service:
+        image: rabbitmq:management
+        restart: always
+        container_name: rabbitmq_service
+        ports:
+            - 5673:5672
+            - 15673:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=admin
+        networks:
+            - api_network
+
+networks:
+    api_network:
+        driver: bridge
